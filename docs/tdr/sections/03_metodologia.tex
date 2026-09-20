@@ -1,0 +1,26 @@
+\section{Metodología de solución}
+\subsection{Selección de zonas candidatas}
+Se ordenan las celdas por probabilidad y se exige separación mínima entre candidatos para evitar múltiples destinos equivalentes dentro de la misma mancha espacial.
+\subsection{Ruteo con A*}
+La grilla válida se transforma en un grafo de navegación. A* busca la ruta de costo mínimo utilizando distancia Haversine. Si existe una máscara legal, los nodos prohibidos se eliminan antes del ruteo.
+\subsection{Greedy}
+Asigna secuencialmente cada barco a la alternativa con mayor puntuación inmediata, incluyendo penalización por distancia y congestión.
+\subsection{MILP}
+Optimiza de forma simultánea la asignación completa de la flota y funciona como benchmark centralizado para el escenario estático.
+\subsection{MARL}
+Se implementa una política cooperativa basada en PPO con parámetros compartidos. Durante el entrenamiento se generan escenarios simulados mediante perturbación gaussiana del mapa real, con $\sigma=0.04$. La perturbación es una simulación explícita para entrenamiento, no un dato observado.
+\subsection{Flujo técnico}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=6mm and 5mm,box/.style={rectangle,rounded corners,draw=navy,thick,fill=softblue,align=center,minimum height=9mm,text width=3cm},arrow/.style={-{Latex[length=2mm]},thick,draw=navy}]
+\node[box] (a) {Mapa de\\probabilidad};
+\node[box,right=of a] (b) {Máscara legal\\SERNANP};
+\node[box,right=of b] (c) {Grafo\\navegable};
+\node[box,below=of c] (d) {Zonas\\candidatas};
+\node[box,left=of d] (e) {Rutas A*};
+\node[box,left=of e] (f) {Greedy / MILP /\\MARL};
+\node[box,below=of f] (g) {Mapas, costos y\\simulación};
+\draw[arrow] (a)--(b);\draw[arrow] (b)--(c);\draw[arrow] (c)--(d);\draw[arrow] (d)--(e);\draw[arrow] (e)--(f);\draw[arrow] (f)--(g);
+\end{tikzpicture}
+\caption{Arquitectura general del sistema.}
+\end{figure}
