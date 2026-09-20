@@ -1,18 +1,46 @@
-# Data policy
+# Política de datos
 
-This repository intentionally does **not** contain the client file MapProbabilidad_adulto.csv.
+Este repositorio no contiene `MapProbabilidad_adulto.csv`.
 
-The repository is public. Put the client file only in your local clone at:
+El repositorio es público. Si usas el archivo real del proyecto, colócalo únicamente en tu copia local:
 
+```text
 data/raw/MapProbabilidad_adulto.csv
+```
 
-That folder is ignored by Git.
+La carpeta está excluida mediante `.gitignore`.
 
-## Provenance labels
+## Etiquetas de procedencia
 
-The pipeline writes outputs/audit.json and uses explicit labels:
+El pipeline genera `outputs/auditoria.json`.
 
-- CLIENT_INPUT: probability grid supplied by the project/client.
-- SIMULATED_DEMO: probability grid generated only for tests, CI, and demonstrations.
+### CLIENT_INPUT
 
-Vessel trajectories are always outputs of the optimization/simulation model and are not historical AIS/SISESAT tracks.
+El mapa de probabilidad proviene del archivo suministrado por el proyecto.
+
+### SIMULATED_DEMO
+
+La superficie de probabilidad fue generada artificialmente por el propio código para:
+
+- pruebas;
+- CI;
+- demostraciones;
+- reproducibilidad pública.
+
+## Trayectorias
+
+Las rutas y movimientos de embarcaciones generados por el optimizador son simulaciones.
+
+No son trayectorias históricas AIS o SISESAT.
+
+## SERNANP
+
+Cuando el modo SERNANP funciona, los GeoJSON descargados se guardan en:
+
+```text
+data/cache/
+```
+
+y también están ignorados por Git.
+
+La auditoría indica si la máscara oficial fue aplicada o no.
