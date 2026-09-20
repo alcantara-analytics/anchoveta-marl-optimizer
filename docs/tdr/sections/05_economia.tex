@@ -1,0 +1,64 @@
+\section{Cumplimiento legal y paso a producción}
+Antes de una utilización real se debe:
+\begin{enumerate}[label=\arabic*.]
+\item actualizar las geometrías oficiales de SERNANP;
+\item incorporar cierres temporales vigentes;
+\item transformar todas las capas al mismo CRS;
+\item eliminar nodos y aristas prohibidas;
+\item verificar cero violaciones legales;
+\item detener el despacho si las capas regulatorias no pueden validarse.
+\end{enumerate}
+\section{Propuesta económica}
+\begin{table}[H]
+\centering
+\caption{Presupuesto referencial de consultoría.}
+\begin{tabular}{lrrr}
+\toprule
+Rol & Horas & Tarifa (S//h) & Subtotal (S/) \\
+\midrule
+Líder / Arquitecto MARL & 70 & 120 & 8,400 \\
+Data Scientist - oceanografía & 70 & 95 & 6,650 \\
+Especialista GIS y ruteo & 55 & 90 & 4,950 \\
+Simulación / backend & 60 & 95 & 5,700 \\
+QA, documentación y dashboard & 35 & 70 & 2,450 \\
+\midrule
+\multicolumn{3}{r}{Subtotal profesional} & 28,150 \\
+Infraestructura y cómputo & & & 1,800 \\
+\midrule
+\multicolumn{3}{r}{\textbf{Total referencial}} & \textbf{29,950} \\
+\bottomrule
+\end{tabular}
+\end{table}
+El presupuesto es referencial y corresponde a un escenario de consultoría académica para llevar el prototipo a una solución operacional reproducible.
+\section{Cronograma}
+\begin{table}[H]
+\centering
+\caption{Cronograma de seis semanas.}
+\scriptsize
+\resizebox{\textwidth}{!}{\begin{tabular}{lcccccc}
+\toprule
+Actividad / Semana & 1 & 2 & 3 & 4 & 5 & 6 \\
+\midrule
+QA de datos y puertos & X & & & & & \\
+SERNANP y restricciones & X & X & & & & \\
+Cubo geoespacial & & X & X & & & \\
+Greedy + MILP & & & X & X & & \\
+MARL y tuning & & & & X & X & \\
+Robustez y simulación & & & & & X & X \\
+Informe y entrega & & & & & & X \\
+\bottomrule
+\end{tabular}}
+\end{table}
+\section{Entregables}
+\begin{itemize}
+\item planteamiento matemático;
+\item datos espaciales de referencia;
+\item módulo de ruteo A*;
+\item Greedy, MILP y MARL;
+\item resultados cuantitativos y auditoría;
+\item mapas y gráficos;
+\item simulación;
+\item propuesta económica;
+\item cronograma;
+\item código reproducible y documentación.
+\end{itemize}
