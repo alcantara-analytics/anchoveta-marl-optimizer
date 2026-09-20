@@ -1,0 +1,54 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{top=2.3cm,bottom=2.3cm,left=2.4cm,right=2.4cm}
+\usepackage{setspace}
+\setstretch{1.12}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,longtable,tabularx,array}
+\usepackage[table]{xcolor}
+\usepackage{graphicx,float,subcaption}
+\usepackage{xurl,hyperref,enumitem,tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\definecolor{navy}{RGB}{21,42,117}
+\definecolor{softblue}{RGB}{237,242,250}
+\definecolor{softorange}{RGB}{252,245,232}
+\definecolor{warnred}{RGB}{154,44,44}
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=navy,citecolor=navy}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+\renewcommand{\arraystretch}{1.15}
+\newcommand{\evidencebox}[1]{\begin{center}\fcolorbox{navy}{softblue}{\begin{minipage}{0.92\textwidth}\small #1\end{minipage}}\end{center}}
+\newcommand{\warningbox}[1]{\begin{center}\fcolorbox{warnred}{softorange}{\begin{minipage}{0.92\textwidth}\small #1\end{minipage}}\end{center}}
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{center}
+\vspace*{1.3cm}
+{\Large CONSULTORÍA ESTADÍSTICA}\par
+\vfill
+{\Huge\bfseries Propuesta Técnica y Económica}\par
+\vspace{0.5cm}
+{\LARGE\bfseries Sistema Multiagente Inteligente y Seguro para la Asignación y Ruteo de una Flota Homogénea de Cerqueros Anchoveteros}\par
+\vspace{0.35cm}
+{\large mediante optimización matemática, teoría de grafos y aprendizaje por refuerzo multiagente}\par
+\vspace{0.9cm}
+{\large Caso de estudio: Empresa Pesquera ``Alta Mar S.A.''}\par
+\vfill
+{\large Integrante: \textbf{Moises Alcantara}}\par
+\vspace{1cm}
+{\large Septiembre, 2026}\par
+\end{center}
+\end{titlepage}
+\tableofcontents
+\newpage
+\input{sections/01_contexto}
+\input{sections/02_modelo}
+\input{sections/03_metodologia}
+\input{sections/04_resultados}
+\input{sections/05_economia}
+\input{sections/06_conclusiones}
+\end{document}
