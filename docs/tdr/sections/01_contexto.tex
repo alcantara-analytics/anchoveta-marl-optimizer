@@ -1,0 +1,45 @@
+\section{Introducción y contexto del proyecto}
+La presente propuesta responde al TDR de optimización espacial de una flota pesquera anchovetera. La empresa dispone de 15 embarcaciones distribuidas equitativamente entre Malabrigo, Chimbote y Callao, y entrega como insumo principal una grilla espacial con la probabilidad de presencia de anchoveta.
+El objetivo no es volver a modelar la distribución de la especie, sino transformar la información de probabilidad en una decisión operacional: asignar simultáneamente cada embarcación a una zona atractiva, minimizar el costo de desplazamiento y construir rutas compatibles con las restricciones espaciales del problema.
+La solución combina optimización matemática, teoría de grafos y aprendizaje por refuerzo multiagente. Como referencia determinística se utilizan Greedy y MILP; como extensión dinámica se incorpora una política MARL basada en PPO compartido.
+\evidencebox{\textbf{Frontera de evidencia.} Los resultados derivados incluidos en este informe fueron generados a partir del archivo real del proyecto. Las rutas y movimientos de embarcaciones son simulaciones del modelo. Los parámetros de combustible son estimaciones de referencia y no telemetría observada de la flota del cliente.}
+\section{Respuesta a los requerimientos del TDR}
+\begin{table}[H]
+\centering\small
+\caption{Correspondencia entre requerimientos y solución.}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{3.2cm} X X}
+\toprule
+Requerimiento & Respuesta & Entregable \\
+\midrule
+Georreferenciar puertos & Coordenadas de Malabrigo, Chimbote y Callao & Configuración reproducible \\
+Excluir AMP/reservas & Máscara legal sobre la grilla y eliminación de nodos prohibidos & Módulo SERNANP \\
+Maximizar oportunidad & Probabilidad de presencia como beneficio & Probabilidad media por método \\
+Minimizar distancia/costo & Rutas A* y penalización de combustible & NM, horas y combustible \\
+Asignar 15 barcos & Greedy, MILP y política MARL & Tablas de asignación \\
+Visualizar resultados & Mapas, gráficos y simulación & Figuras y GIF \\
+Propuesta económica & Desglose por roles y recursos & Presupuesto y cronograma \\
+\bottomrule
+\end{tabularx}
+\end{table}
+\section{Datos, fuentes y supuestos}
+\subsection{Mapa de probabilidad}
+La base del proyecto contiene las variables \texttt{Lon}, \texttt{Lat} y \texttt{Prob}. En la auditoría se registraron 11,752 celdas válidas. La probabilidad se interpreta como una señal espacial de oportunidad y no como toneladas de captura.
+\subsection{Puertos base}
+\begin{table}[H]
+\centering
+\caption{Puertos de referencia.}
+\begin{tabular}{lrr}
+\toprule
+Puerto & Longitud & Latitud \\
+\midrule
+Malabrigo & -79.4414 & -7.6928 \\
+Chimbote & -78.9475 & -9.0758 \\
+Callao & -77.1403 & -12.0450 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\subsection{Flota homogénea}
+El experimento considera 15 agentes, cinco por puerto, con los mismos parámetros de capacidad, velocidad y función de combustible. El escenario académico utiliza una capacidad de referencia de 500 t, 12.5 kn en salida, 11.5 kn en retorno y una tasa horaria de combustible de referencia de 209.5 L/h.
+\subsection{Restricción legal}
+La solución incorpora una capa de exclusión basada en geometrías oficiales. Si una celda está prohibida, queda fuera del grafo navegable.
+\warningbox{\textbf{Estado de la corrida reportada.} En la auditoría de los resultados derivados, SERNANP aparece como no materializado. Por ello, los resultados cuantitativos actuales deben entenderse como validación algorítmica y no como una orden operacional legal final. Antes de uso real, la máscara oficial debe estar activa y validada.}
