@@ -1,0 +1,43 @@
+\section{Conclusiones}
+El TDR se resuelve mediante una arquitectura híbrida de asignación y ruteo. Para la fotografía estática disponible, MILP constituye el benchmark más eficiente. MARL debe considerarse una extensión orientada a decisiones secuenciales y dinámicas.
+La principal condición pendiente para uso operacional es la materialización de la máscara legal y los cierres temporales vigentes. El sistema debe operar bajo una regla conservadora: si las restricciones legales no están verificadas, no debe generar una orden de despacho.
+\section{Tabla de participación}
+\begin{table}[H]
+\centering
+\caption{Distribución de participación.}
+\begin{tabular}{lr}
+\toprule
+Integrante & Participación \\
+\midrule
+Moises Alcantara & 100\% \\
+\midrule
+Total & 100\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+\newpage
+\section*{Referencias}
+\addcontentsline{toc}{section}{Referencias}
+\begin{thebibliography}{9}
+\bibitem{tdr} Empresa Pesquera ``Alta Mar S.A.''. \textit{Términos de Referencia: Optimización Espacial de Flota Pesquera Anchovetera}, 2026.
+\bibitem{sernanp} SERNANP. \textit{Geoportal y geoservicios oficiales}. \url{https://geo.sernanp.gob.pe/}.
+\bibitem{astar} Hart, P. E., Nilsson, N. J. y Raphael, B. (1968). A Formal Basis for the Heuristic Determination of Minimum Cost Paths. \textit{IEEE Transactions on Systems Science and Cybernetics}, 4(2), 100--107.
+\bibitem{mappo} Yu, C. et al. (2022). The Surprising Effectiveness of PPO in Cooperative Multi-Agent Games. \textit{NeurIPS}, 35.
+\bibitem{cummins} Cummins Inc. \textit{Cummins Power for Peruvian Purse Seiner / KTA50 Marine Engine}. \url{https://www.cummins.com/en-na/case-studies/cummins-power-peruvian-purse-seiner}.
+\end{thebibliography}
+\appendix
+\section{Estado de implementación}
+\begin{longtable}{p{4.2cm}p{3.2cm}p{7cm}}
+\toprule
+Componente & Estado & Comentario \\
+\midrule
+Mapa de probabilidad & Implementado & Derivado del archivo del proyecto. \\
+15 barcos / 3 puertos & Implementado & Cinco agentes por puerto. \\
+Asignación simultánea & Implementado & Greedy, MILP y MARL. \\
+Ruteo geoespacial & Implementado & A* en el código principal. \\
+Combustible & Implementado & Estimación de referencia, no observada. \\
+SERNANP & Implementado en código & Pendiente de materialización en la corrida reportada. \\
+Simulación & Implementada & Resultado simulado y claramente etiquetado. \\
+Presupuesto & Incluido & Total referencial S/ 29,950. \\
+\bottomrule
+\end{longtable}
