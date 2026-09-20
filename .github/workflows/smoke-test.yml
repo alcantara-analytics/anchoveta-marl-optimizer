@@ -1,0 +1,32 @@
+name: smoke-test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Unit tests
+        run: pytest -q
+      - name: Functional demo run
+        run: python scripts/run_pipeline.py --demo --no-gif
+      - name: Verify audit
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('outputs/audit.json')
+          x=json.loads(p.read_text())
+          assert x['probability_source_type']=='SIMULATED_DEMO'
+          assert x['simulated_probability'] is True
+          print(x)
+          PY
