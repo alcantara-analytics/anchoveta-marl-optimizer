@@ -1,32 +1,173 @@
-# Methodology and evidence boundary
+# Metodología y frontera de evidencia
 
-## Core problem
+## Problema central
 
-The project assigns 15 homogeneous anchoveta purse-seiner agents to spatial candidate zones while balancing probability of presence and travel/fuel cost.
+El proyecto asigna 15 agentes homogéneos que representan cerqueros anchoveteros a zonas espaciales candidatas, equilibrando:
 
-## What is observed / supplied
+- probabilidad de presencia;
+- distancia recorrida;
+- tiempo de navegación;
+- combustible;
+- costo económico de escenario;
+- congestión de flota;
+- restricciones geográficas cuando SERNANP está disponible.
 
-- The client probability grid, when present locally.
-- Publicly documented reference port locations used by the academic model.
+## Datos observados o suministrados
 
-## What is modeled
+### Mapa de probabilidad
 
-- Candidate-zone selection.
-- A* routes through valid grid cells.
-- Greedy and MILP fleet allocation.
-- Animated vessel movement along planned routes.
+Cuando existe localmente `MapProbabilidad_adulto.csv`, el sistema lo registra como:
 
-## What is simulated
+```text
+CLIENT_INPUT
+```
 
-- All vessel movements in maps/GIFs are simulated model outputs.
-- When --demo is used, the probability field is also simulated and is labeled SIMULATED_DEMO.
+No se afirma que ese archivo sea un producto oficial del Estado; es un insumo del proyecto.
 
-## What is not claimed
+### SERNANP
 
-- The simulated routes are not historical vessel tracks.
-- Probability of presence is not interpreted as catch tonnage.
-- Reference fuel and vessel parameters are scenario parameters, not telemetry from the client's fleet.
+El modo `--sernanp auto` intenta descargar:
 
-## External-data strategy
+- ANP Nacional Definitiva;
+- Zonas Reservadas.
 
-The robust core intentionally runs without fragile external APIs. Official environmental layers can be added later as optional modules, but the core pipeline remains executable and auditable without them.
+Si funciona, las celdas interiores se eliminan del grafo navegable. Si falla, el pipeline puede continuar, pero la auditoría registra claramente que la máscara oficial no fue aplicada.
+
+El modo:
+
+```bash
+--sernanp estricto
+```
+
+obliga a detener la ejecución si SERNANP no puede materializarse.
+
+## Datos simulados
+
+### Modo demo
+
+Con:
+
+```bash
+--demo
+```
+
+la superficie de probabilidad es artificial y queda marcada como:
+
+```text
+SIMULATED_DEMO
+```
+
+### Movimiento de embarcaciones
+
+Las trayectorias y la animación GIF siempre son **salidas simuladas del modelo**. No corresponden a AIS, SISESAT ni otra reconstrucción histórica.
+
+## Flota homogénea
+
+El experimento considera:
+
+- 15 agentes;
+- 5 con origen Malabrigo;
+- 5 con origen Chimbote;
+- 5 con origen Callao;
+- misma capacidad, velocidad y función de combustible.
+
+Esto es una hipótesis experimental del TDR, no una afirmación de que una empresa real opere exactamente 15 naves idénticas.
+
+## Ruteo
+
+Las rutas se calculan con A* sobre una grilla de celdas válidas.
+
+Si SERNANP está aplicado:
+
+```text
+nodo navegable = celda válida AND fuera de exclusión SERNANP
+```
+
+La distancia se calcula en millas náuticas mediante Haversine.
+
+## Optimización
+
+### Greedy
+
+Asignación secuencial basada en:
+
+- alta probabilidad;
+- bajo combustible;
+- penalización por ocupación de zona.
+
+### MILP
+
+Optimización simultánea de toda la flota bajo:
+
+- una zona por barco;
+- máximo experimental de barcos por zona;
+- costo distancia/combustible.
+
+MILP funciona como benchmark determinístico centralizado.
+
+## Costos
+
+Para cada barco:
+
+```text
+distancia_total = distancia_salida + distancia_retorno
+horas_salida = distancia_salida / velocidad_salida
+horas_retorno = distancia_retorno / velocidad_retorno
+combustible_total = combustible_salida + combustible_retorno
+costo_combustible = combustible_total × precio_combustible
+costo_operativo = horas_total × costo_operativo_hora
+costo_total = costo_combustible + costo_operativo
+```
+
+El precio de combustible y el costo operativo por hora son **parámetros de escenario**. No deben presentarse como costos observados del cliente salvo que sean reemplazados por datos reales.
+
+## Métricas
+
+Se reportan:
+
+- probabilidad media de zonas asignadas;
+- distancia total;
+- combustible total;
+- costo total;
+- cantidad de zonas usadas;
+- ocupación máxima;
+- costos por puerto;
+- trade-off distancia/probabilidad.
+
+## Mapas y simulación
+
+El pipeline genera:
+
+- mapa de probabilidad y zonas candidatas;
+- mapa Greedy;
+- mapa MILP;
+- gráficos de costos y combustible;
+- gráfico de ocupación;
+- gráfico de trade-off;
+- simulación GIF.
+
+## Límite sobre captura
+
+`Prob` no se convierte directamente en toneladas.
+
+La relación correcta requeriría algo como:
+
+```text
+E[Captura] = P(Presencia) × E[Captura | Presencia, Ambiente]
+```
+
+Para ello hacen falta CPUE, biomasa acústica o registros equivalentes.
+
+## Extensión futura
+
+La arquitectura permite añadir posteriormente:
+
+- MAPPO;
+- MAPPO + GAT;
+- Copernicus;
+- SISESAT;
+- batimetría;
+- cierres temporales PRODUCE;
+- CPUE/biomasa.
+
+Estas extensiones no son necesarias para que el núcleo actual funcione.
