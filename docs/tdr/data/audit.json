@@ -1,0 +1,21 @@
+{
+  "core_probability_data": "OBSERVED_CLIENT_INPUT",
+  "probability_file": "LOCAL_ONLY/MapProbabilidad_adulto.csv",
+  "probability_rows_valid": 11752,
+  "ports": "DOCUMENTED_REFERENCE_COORDINATES",
+  "vessel_parameters": "DOCUMENTED_ACADEMIC_REFERENCE_NOT_CLIENT_FLEET",
+  "training_dynamic_scenarios": "SIMULATED_FROM_REAL_PROBABILITY_WITH_GAUSSIAN_PERTURBATION",
+  "simulated_probability_sigma": 0.04,
+  "external_official_sernanp": {
+    "attempted": false,
+    "used": false,
+    "error": null,
+    "layers": []
+  },
+  "route_grid": "REAL_LAT_LON_FROM_CLIENT_GRID",
+  "estimated_fuel": "REFERENCE_ESTIMATE_NOT_OBSERVED_FUEL",
+  "n_agents": 15,
+  "n_zones": 15,
+  "excluded_grid_cells_by_sernanp": 0,
+  "note": "El archivo bruto del cliente no se publica en este repositorio. Los resultados derivados se incluyen para documentar el informe."
+}
