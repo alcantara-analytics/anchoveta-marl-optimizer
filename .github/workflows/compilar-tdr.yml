@@ -1,0 +1,53 @@
+name: compilar-tdr
+
+on:
+  push:
+    paths:
+      - 'docs/tdr/**'
+      - '.github/workflows/compilar-tdr.yml'
+  workflow_dispatch:
+
+jobs:
+  compilar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias Python
+        run: |
+          pip install numpy pandas matplotlib
+
+      - name: Generar figuras reproducibles
+        run: python docs/tdr/generar_figuras.py
+
+      - name: Instalar LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-extra texlive-lang-spanish texlive-fonts-recommended
+
+      - name: Compilar informe
+        working-directory: docs/tdr
+        run: |
+          pdflatex -interaction=nonstopmode -halt-on-error main.tex
+          pdflatex -interaction=nonstopmode -halt-on-error main.tex
+
+      - name: Verificar PDF
+        run: test -s docs/tdr/main.pdf
+
+      - name: Publicar TDR como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tdr-resuelto-moises-alcantara
+          path: |
+            docs/tdr/main.pdf
+            docs/tdr/main.tex
+            docs/tdr/sections/
+            docs/tdr/figures/
+            docs/tdr/data/
+          retention-days: 30
