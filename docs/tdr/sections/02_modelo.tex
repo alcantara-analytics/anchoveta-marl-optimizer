@@ -1,0 +1,19 @@
+\section{Formulación matemática}
+Sea $\mathcal I=\{1,\ldots,15\}$ el conjunto de embarcaciones y $\mathcal J$ el conjunto de zonas candidatas. La variable de decisión es:
+\[
+x_{ij}=\begin{cases}1,&\text{si el barco }i\text{ se asigna a la zona }j,\\0,&\text{en otro caso.}\end{cases}
+\]
+Para cada zona $j$ se conoce $P_j\in[0,1]$ y para cada par puerto-zona se calcula una distancia $D_{ij}$. El combustible homogéneo se expresa como:
+\[F_{ij}=cD_{ij},\]
+donde $c$ es común a toda la flota.
+La función objetivo básica es:
+\[
+\max_x\sum_{i\in\mathcal I}\sum_{j\in\mathcal J}\left(\alpha P_j-\lambda \widetilde D_{ij}\right)x_{ij},
+\]
+sujeta a:
+\[\sum_j x_{ij}=1\quad\forall i,\]
+\[\sum_i x_{ij}\le K\quad\forall j,\]
+\[x_{ij}\le L_j,\qquad x_{ij}\in\{0,1\}.\]
+Para el componente multiagente se emplea una recompensa:
+\[r_i=\alpha P_{a_i}-\lambda \widetilde D_{i,a_i}-\gamma C_{a_i}-\eta\,\mathrm{Fairness}.\]
+El término $C_{a_i}$ penaliza congestión y el componente de equidad evita que el esfuerzo de navegación se concentre de forma desbalanceada entre agentes.
