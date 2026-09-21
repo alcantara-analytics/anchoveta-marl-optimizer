@@ -53,7 +53,10 @@ jobs:
           test -f outputs/mapa_probabilidad_zonas.png
           test -f outputs/mapa_asignacion_greedy.png
           test -f outputs/mapa_asignacion_milp.png
-          test -f outputs/simulacion_flota.gif
+          test -f outputs/mapa_asignacion_marl.png
+          test -f outputs/asignacion_marl.csv
+          test -f outputs/historial_entrenamiento_marl.csv
+          test -f outputs/simulacion_flota_marl.gif
           test -f outputs/resumen_metodos.csv
           test -f outputs/costos_por_barco.csv
           test -f outputs/costos_por_puerto.csv
@@ -62,6 +65,6 @@ jobs:
       - name: Publicar resultados de la grilla real como artifact
         uses: actions/upload-artifact@v4
         with:
-          name: resultados-map-probabilidad-adulto
+          name: resultados-map-probabilidad-adulto-marl
           path: outputs/
           retention-days: 30
