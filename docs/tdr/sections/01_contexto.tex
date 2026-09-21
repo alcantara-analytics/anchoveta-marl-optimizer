@@ -1,7 +1,7 @@
 \section{Introducción y contexto del proyecto}
 La presente propuesta responde al TDR de optimización espacial de una flota pesquera anchovetera. La empresa dispone de 15 embarcaciones distribuidas equitativamente entre Malabrigo, Chimbote y Callao, y entrega como insumo principal una grilla espacial con la probabilidad de presencia de anchoveta.
 El objetivo no es volver a modelar la distribución de la especie, sino transformar la información de probabilidad en una decisión operacional: asignar simultáneamente cada embarcación a una zona atractiva, minimizar el costo de desplazamiento y construir rutas compatibles con las restricciones espaciales del problema.
-La solución combina optimización matemática, teoría de grafos y aprendizaje por refuerzo multiagente. Como referencia determinística se utilizan Greedy y MILP; como extensión dinámica se incorpora una política MARL basada en PPO compartido.
+La solución combina optimización matemática, teoría de grafos y aprendizaje por refuerzo multiagente. Como referencias determinísticas se utilizan Greedy y MILP; como extensión adaptativa se incorpora una política MARL cooperativa con parámetros compartidos. Todo el análisis espacial parte de \texttt{MapProbabilidad\_adulto.csv}; no se sustituye la superficie por un mapa sintético.
 \evidencebox{\textbf{Frontera de evidencia.} Los resultados derivados incluidos en este informe fueron generados a partir del archivo real del proyecto. Las rutas y movimientos de embarcaciones son simulaciones del modelo. Los parámetros de combustible son estimaciones de referencia y no telemetría observada de la flota del cliente.}
 \section{Respuesta a los requerimientos del TDR}
 \begin{table}[H]
