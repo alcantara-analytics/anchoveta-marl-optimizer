@@ -3,9 +3,10 @@ name: compilar-tdr
 on:
   push:
     paths:
+      - 'MapProbabilidad_adulto.csv'
+      - 'src/**'
+      - 'scripts/**'
       - 'docs/tdr/**'
-      - 'data/raw/**'
-      - 'scripts/materializar_datos.py'
       - 'docs/resultados_ampliados/**'
       - '.github/workflows/compilar-tdr.yml'
   workflow_dispatch:
@@ -23,13 +24,13 @@ jobs:
           python-version: '3.11'
 
       - name: Instalar dependencias Python
+        run: pip install -r requirements.txt
+
+      - name: Ejecutar pipeline sobre MapProbabilidad_adulto.csv
         run: |
-          pip install numpy pandas matplotlib
+          python scripts/run_pipeline.py             --sernanp no             --precio-combustible 5.0             --costo-operativo-hora 0.0             --no-gif
 
-      - name: Materializar MapProbabilidad_adulto.csv
-        run: python scripts/materializar_datos.py
-
-      - name: Generar figuras reproducibles con la grilla completa
+      - name: Generar figuras y resultados del TDR
         run: python docs/tdr/generar_figuras.py
 
       - name: Instalar LaTeX
@@ -46,15 +47,15 @@ jobs:
       - name: Verificar PDF
         run: test -s docs/tdr/main.pdf
 
-      - name: Publicar TDR como artifact
+      - name: Publicar TDR y resultados
         uses: actions/upload-artifact@v4
         with:
-          name: tdr-resuelto-moises-alcantara
+          name: tdr-resuelto-map-probabilidad-adulto
           path: |
             docs/tdr/main.pdf
             docs/tdr/main.tex
             docs/tdr/sections/
             docs/tdr/figures/
-            docs/tdr/data/
+            outputs/
             docs/resultados_ampliados/
           retention-days: 30
