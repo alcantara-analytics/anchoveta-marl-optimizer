@@ -2,95 +2,71 @@
 
 Proyecto académico para la **asignación y ruteo de una flota homogénea de 15 cerqueros anchoveteros** que operan desde Malabrigo, Chimbote y Callao.
 
-> **Regla de evidencia:** el repositorio distingue explícitamente entre datos del proyecto, fuentes oficiales descargadas, parámetros de escenario y simulaciones. Nunca se presenta una simulación como si fuera una observación real.
+> **Fuente espacial única:** todo el pipeline usa `data/raw/MapProbabilidad_adulto.csv`. No existe un modo demo que sustituya esa superficie por una probabilidad sintética.
 
 ## Qué incluye
 
-El pipeline principal puede ejecutarse de extremo a extremo y genera:
+El pipeline ejecuta:
 
-1. carga de `MapProbabilidad_adulto.csv` o una grilla demo marcada como simulada;
-2. selección de zonas candidatas espacialmente separadas;
-3. intento opcional de incorporar **ANP y Zonas Reservadas de SERNANP**;
+1. carga y validación de `MapProbabilidad_adulto.csv`;
+2. selección de zonas candidatas sobre esa misma grilla;
+3. incorporación opcional de ANP/Zonas Reservadas de SERNANP;
 4. grafo navegable y rutas A*;
-5. asignación simultánea de los 15 barcos mediante **Greedy** y **MILP**;
-6. cálculo de distancia, tiempo de viaje, combustible y costo económico de escenario;
-7. mapas de probabilidad, zonas y asignaciones;
-8. gráficos de costos, combustible, ocupación y trade-off distancia/probabilidad;
-9. simulación GIF del movimiento de la flota;
-10. tablas resumen, auditoría de procedencia y reporte HTML en español.
+5. asignación de 15 barcos mediante Greedy, MILP y MARL cooperativo;
+6. cálculo de distancia, tiempo, combustible y costo de escenario;
+7. mapas sobre la grilla completa;
+8. gráficos comparativos y diagnósticos;
+9. simulación GIF de las rutas planeadas;
+10. auditoría, reporte HTML y TDR en LaTeX.
 
-## Importante: qué es real y qué es simulado
+## Qué es dato y qué es simulación
 
-### Dato del proyecto
+### Dato base del proyecto
 
-Si colocas:
-
-```text
-data/raw/MapProbabilidad_adulto.csv
-```
-
-la probabilidad queda registrada como:
+`MapProbabilidad_adulto.csv` está versionado en el repositorio y contiene:
 
 ```text
-CLIENT_INPUT
+Lon
+Lat
+Prob
 ```
 
-### Datos oficiales opcionales
+El pipeline valida su integridad y registra:
 
-El modo `--sernanp auto` intenta descargar capas oficiales de SERNANP. Si la fuente no responde, el pipeline **continúa** pero deja registrado que la restricción oficial no pudo aplicarse.
-
-Para exigirla:
-
-```bash
-python scripts/run_pipeline.py --sernanp estricto
+```text
+MAP_PROBABILIDAD_ADULTO
 ```
+
+La superficie de probabilidad **no se reemplaza ni se perturba** durante el entrenamiento principal.
+
+### MARL
+
+El entrenamiento MARL usa la misma grilla estática y real del proyecto. La aleatoriedad se limita al muestreo de acciones propio del aprendizaje por refuerzo; no se generan mapas sintéticos.
 
 ### Simulación
 
-- Las rutas asignadas y el movimiento de los barcos son **salidas simuladas del modelo**.
-- Si se usa `--demo`, también la superficie de probabilidad es simulada y se etiqueta como `SIMULATED_DEMO`.
-- El precio del combustible es un **parámetro económico de escenario**, no un precio observado, salvo que el usuario lo reemplace.
+Las rutas, asignaciones y movimiento animado de las embarcaciones son **salidas del modelo**. No representan tracks AIS/SISESAT observados.
 
-## Instalación
+## Ejecución
 
 ```bash
 python -m venv .venv
 # Windows
 .venv\Scripts\activate
-
 # macOS/Linux
 source .venv/bin/activate
 
 pip install -r requirements.txt
-```
-
-## Ejecución con la base del proyecto
-
-Coloca el CSV en:
-
-```text
-data/raw/MapProbabilidad_adulto.csv
-```
-
-y ejecuta:
-
-```bash
 python scripts/run_pipeline.py
 ```
 
-Ejemplo definiendo un precio de combustible para el escenario:
+Para exigir la máscara SERNANP:
 
 ```bash
-python scripts/run_pipeline.py --precio-combustible 5.00
+python scripts/run_pipeline.py --sernanp estricto
 ```
 
-## Ejecución demo totalmente reproducible
-
-```bash
-python scripts/run_pipeline.py --demo
-```
-
-## Salidas
+## Salidas principales
 
 ```text
 outputs/
@@ -98,92 +74,48 @@ outputs/
 ├── costos_rutas.csv
 ├── asignacion_greedy.csv
 ├── asignacion_milp.csv
+├── asignacion_marl.csv
+├── historial_entrenamiento_marl.csv
 ├── resumen_metodos.csv
 ├── costos_por_barco.csv
 ├── costos_por_puerto.csv
 ├── mapa_probabilidad_zonas.png
 ├── mapa_asignacion_greedy.png
 ├── mapa_asignacion_milp.png
-├── grafico_comparacion_metodos.png
-├── grafico_costos_por_barco.png
-├── grafico_combustible_por_puerto.png
-├── grafico_ocupacion_zonas.png
-├── grafico_distancia_vs_probabilidad.png
-├── simulacion_flota.gif
+├── mapa_asignacion_marl.png
+├── simulacion_flota_marl.gif
 ├── reporte_resultados.html
 └── auditoria.json
 ```
 
 ## Costos
 
-Para cada ruta se calculan:
+[
+Combustible = q_{fuel}	imes Horas
+]
+
+[
+Costo_{combustible}=Litros	imes Precio_{combustible}
+]
+
+El precio de combustible y cualquier costo operativo adicional son parámetros de escenario salvo que se sustituyan por datos observados.
+
+## TDR e informe
+
+El proyecto LaTeX está en:
 
 ```text
-distancia_salida_nm
-distancia_retorno_nm
-distancia_total_nm
-horas_salida
-horas_retorno
-horas_total
-combustible_salida_l
-combustible_retorno_l
-combustible_total_l
-costo_combustible_pen
-costo_operativo_pen
-costo_total_pen
+docs/tdr/
 ```
 
-La fórmula base es:
+y los resultados ampliados en:
 
 ```text
-combustible = tasa_referencia_L/h × horas_de_viaje
+docs/resultados_ampliados/
 ```
 
-y:
-
-```text
-costo_combustible = combustible_total_L × precio_combustible_S/L
-```
-
-El precio puede modificarse por línea de comandos.
-
-## Estructura
-
-```text
-anchoveta-marl-optimizer/
-├── src/anchoveta_marl/
-│   ├── config.py
-│   ├── data.py
-│   ├── official_data.py
-│   ├── routing.py
-│   ├── optimization.py
-│   ├── reporting.py
-│   └── simulation.py
-├── scripts/
-│   └── run_pipeline.py
-├── notebooks/
-│   └── 01_analisis_completo_es.ipynb
-├── tests/
-├── docs/
-└── .github/workflows/
-```
-
-## GitHub Actions
-
-Cada push ejecuta:
-
-- tests unitarios;
-- pipeline demo funcional;
-- auditoría de simulación;
-- generación de gráficos, tablas y reporte;
-- carga de `outputs/` como artifact descargable.
+GitHub Actions compila el TDR y valida el pipeline contra `MapProbabilidad_adulto.csv`.
 
 ## Límite metodológico
 
-`Prob` es probabilidad/puntuación de presencia del mapa suministrado. **No equivale directamente a toneladas de captura**.
-
-Para optimizar toneladas se necesitaría una segunda capa de CPUE, biomasa o captura condicional observada.
-
-## Privacidad
-
-El repositorio actualmente es público. El archivo `MapProbabilidad_adulto.csv` está excluido mediante `.gitignore` y **no debe subirse** salvo que tengas autorización para publicarlo.
+`Prob` es probabilidad/puntuación de presencia. **No equivale directamente a toneladas de captura.** Para modelar toneladas se requiere CPUE, biomasa acústica o captura condicional.
