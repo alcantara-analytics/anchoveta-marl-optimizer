@@ -267,7 +267,7 @@ def main():
 
     auditoria = {
         "procedencia_probabilidad": procedencia,
-        "probabilidad_simulada": procedencia == "SIMULATED_DEMO",
+        "probabilidad_simulada": False,
         "rutas_y_movimiento_simulados": True,
         "metodo_visualizacion_principal": "MILP",
         "n_agentes": int(len(agents)),
