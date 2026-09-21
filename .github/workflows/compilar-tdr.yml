@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'docs/tdr/**'
+      - 'docs/resultados_ampliados/**'
       - '.github/workflows/compilar-tdr.yml'
   workflow_dispatch:
 
@@ -50,4 +51,5 @@ jobs:
             docs/tdr/sections/
             docs/tdr/figures/
             docs/tdr/data/
+            docs/resultados_ampliados/
           retention-days: 30
