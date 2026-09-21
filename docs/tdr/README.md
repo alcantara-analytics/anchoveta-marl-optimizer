@@ -1,47 +1,26 @@
 # TDR resuelto — Moises Alcantara
 
-Esta carpeta contiene la propuesta técnica y económica en **LaTeX**, los resultados derivados usados en el informe y un generador reproducible de figuras.
+El informe se genera de forma reproducible a partir del archivo `MapProbabilidad_adulto.csv` de la raíz del repositorio.
 
-## Estructura
-
-```text
-docs/tdr/
-├── main.tex
-├── sections/
-├── data/
-├── generar_figuras.py
-└── figures/              # se genera automáticamente
-```
-
-## Compilar localmente
-
-Desde la raíz del repositorio:
+## Flujo
 
 ```bash
+python scripts/run_pipeline.py --sernanp no --no-gif
 python docs/tdr/generar_figuras.py
 cd docs/tdr
 pdflatex -interaction=nonstopmode -halt-on-error main.tex
 pdflatex -interaction=nonstopmode -halt-on-error main.tex
 ```
 
-El PDF resultante será:
+## Importante
 
-```text
-docs/tdr/main.pdf
-```
+- No se usan CSV de resultados estáticos versionados dentro de `docs/tdr/data/`.
+- Las tablas y figuras del TDR se generan desde `outputs/` en cada ejecución.
+- La superficie de probabilidad viene directamente de `MapProbabilidad_adulto.csv`.
+- No se usa una grilla sintética, suavizada o interpolada.
+- Las rutas y movimientos de barcos sí son salidas simuladas del modelo.
+- Si SERNANP no está aplicado, no se dibujan exclusiones regulatorias ficticias.
 
 ## GitHub Actions
 
-El workflow `compilar-tdr.yml` genera automáticamente las figuras, compila el LaTeX y publica un artifact llamado:
-
-```text
-tdr-resuelto-moises-alcantara
-```
-
-## Evidencia
-
-- Los CSV de esta carpeta son **resultados derivados** de la ejecución realizada con el archivo del proyecto.
-- El archivo bruto `MapProbabilidad_adulto.csv` no se publica.
-- Las trayectorias y movimientos de la flota son simulaciones del modelo.
-- Los valores de combustible son estimaciones de referencia.
-- La corrida reportada no materializó SERNANP; por eso el documento lo declara expresamente y no presenta los resultados como rutas legales finales.
+El workflow `compilar-tdr` ejecuta el pipeline, genera las figuras, compila el PDF y publica el artifact `tdr-resuelto-map-probabilidad-adulto`.
