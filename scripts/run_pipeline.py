@@ -14,7 +14,6 @@ sys.path.insert(0, str(ROOT / "src"))
 from anchoveta_marl.config import PORTS, FleetConfig
 from anchoveta_marl.data import (
     load_probability_grid,
-    make_simulated_probability_grid,
     select_candidate_zones,
 )
 from anchoveta_marl.official_data import (
@@ -26,6 +25,11 @@ from anchoveta_marl.optimization import (
     build_agents,
     greedy_assignment,
     milp_assignment,
+)
+from anchoveta_marl.marl import (
+    MARLConfig,
+    train_marl_static,
+    decode_policy_with_capacity,
 )
 from anchoveta_marl.reporting import (
     resumen_metodo,
@@ -95,7 +99,6 @@ def main():
         description="Optimizador multiagente de flota anchovetera — versión reproducible en español."
     )
     ap.add_argument("--input", default="data/raw/MapProbabilidad_adulto.csv")
-    ap.add_argument("--demo", action="store_true", help="Usa una probabilidad simulada y la etiqueta como SIMULATED_DEMO")
     ap.add_argument("--no-gif", action="store_true", help="No genera la animación GIF")
     ap.add_argument(
         "--sernanp",
@@ -124,10 +127,11 @@ def main():
 
     cfg = FleetConfig()
 
-    if args.demo:
-        prob, procedencia = make_simulated_probability_grid()
-    else:
-        prob, procedencia = load_probability_grid(ROOT / args.input)
+    dataset_path = ROOT / args.input
+    if not dataset_path.exists():
+        from materializar_datos import materializar
+        materializar()
+    prob, procedencia = load_probability_grid(dataset_path)
 
     bbox = {
         "west": float(prob["Lon"].min()),
@@ -316,10 +320,12 @@ def main():
             "Probabilidad de presencia no equivale a toneladas de captura. "
             "Se requiere CPUE/biomasa/captura condicional para monetizar pesca esperada."
         ),
+        "marl_entrenamiento": "ESTATICO_SOBRE_MAP_PROBABILIDAD_ADULTO_SIN_PERTURBAR_PROB",
+        "marl_updates": int(marl_cfg.updates),
         "nota": (
-            "Las rutas y movimientos son decisiones simuladas del modelo. "
-            "Si procedencia_probabilidad=CLIENT_INPUT, la probabilidad viene del archivo del proyecto; "
-            "si SIMULATED_DEMO, también la probabilidad fue simulada."
+            "La probabilidad, selección de zonas y entrenamiento MARL usan MapProbabilidad_adulto.csv. "
+            "No se genera ni perturba una superficie sintética de probabilidad. "
+            "Las rutas y movimientos son decisiones/simulaciones del modelo."
         ),
     }
 
