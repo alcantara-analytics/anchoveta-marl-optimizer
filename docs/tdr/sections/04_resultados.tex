@@ -2,19 +2,7 @@
 
 \subsection{Comparación de métodos}
 
-\begin{table}[H]
-\centering
-\caption{Resultados derivados de la corrida del proyecto.}
-\resizebox{0.98\textwidth}{!}{\begin{tabular}{lrrrrr}
-\toprule
-Método & Prob. media & Distancia total (NM) & Combustible ref. (L) & Zonas & Costo ref. (S/) \\
-\midrule
-Greedy & 0.9025 & 1,070.41 & 17,940.01 & 13 & 89,700 \\
-MILP   & 0.9352 &   598.31 & 10,027.70 &  6 & 50,138 \\
-MARL   & 0.9265 & 2,022.92 & 33,904.11 &  5 & 169,521 \\
-\bottomrule
-\end{tabular}}
-\end{table}
+\input{figures/tabla_resultados_metodos.tex}
 
 El costo referencial utiliza S/ 5.00 por litro únicamente como escenario ilustrativo. No debe interpretarse como un precio oficial ni como un costo observado de la empresa.
 
@@ -101,19 +89,7 @@ La ocupación permite estudiar la coordinación y la concentración espacial. El
 
 \subsection{Diagnóstico MARL por puerto}
 
-\begin{table}[H]
-\centering
-\caption{Resumen MARL por puerto.}
-\begin{tabular}{lrrr}
-\toprule
-Puerto & Prob. media & Distancia total (NM) & Combustible ref. (L) \\
-\midrule
-Malabrigo & 0.9145 & 507.98 & 8,513.68 \\
-Chimbote & 0.9135 & 477.74 & 8,006.93 \\
-Callao & 0.9515 & 1,037.20 & 17,383.50 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{figures/tabla_marl_puertos.tex}
 
 \begin{figure}[H]
 \centering
