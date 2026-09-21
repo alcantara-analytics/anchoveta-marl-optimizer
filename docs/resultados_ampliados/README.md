@@ -2,31 +2,23 @@
 
 Esta carpeta complementa el TDR con un notebook y una vista HTML para revisar mapas, gráficos, asignaciones y simulación.
 
-## Archivos
+## Fuente de datos
 
-- `RESULTADOS_anchoveta_informe_ampliado.ipynb`
-- `reporte_resultados_anchoveta_ampliado.html`
+Todo se genera a partir de `MapProbabilidad_adulto.csv`, ubicado en la raíz del repositorio.
 
-Las figuras se generan con:
+No existe fallback a una grilla demo, sintética o suavizada.
+
+## Flujo recomendado
 
 ```bash
+python scripts/run_pipeline.py --sernanp no
 python docs/tdr/generar_figuras.py
 ```
 
-y se guardan en:
-
-```text
-docs/tdr/figures/
-```
-
-Los datos derivados usados para el informe están en:
-
-```text
-docs/tdr/data/
-```
+Los resultados numéricos quedan en `outputs/` y las figuras del informe en `docs/tdr/figures/`.
 
 ## Importante
 
-- El archivo bruto del cliente no se publica.
-- Las rutas y movimientos son simulaciones del modelo.
-- Las zonas circulares de exclusión son referencias visuales, no geometrías oficiales SERNANP.
+- La superficie de probabilidad proviene directamente del CSV base.
+- Las rutas y el movimiento de barcos son salidas simuladas del modelo.
+- No se dibujan exclusiones regulatorias ficticias; si SERNANP no se aplica, la auditoría lo deja explícito.
