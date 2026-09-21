@@ -8,7 +8,7 @@ Asigna secuencialmente cada barco a la alternativa con mayor puntuación inmedia
 \subsection{MILP}
 Optimiza de forma simultánea la asignación completa de la flota y funciona como benchmark centralizado para el escenario estático.
 \subsection{MARL}
-Se implementa una política cooperativa basada en PPO con parámetros compartidos. Durante el entrenamiento se generan escenarios simulados mediante perturbación gaussiana del mapa real, con $\sigma=0.04$. La perturbación es una simulación explícita para entrenamiento, no un dato observado.
+Se implementa una política MARL cooperativa con parámetros compartidos y actualización mediante gradiente de política. El entrenamiento utiliza directamente las zonas y probabilidades obtenidas de \texttt{MapProbabilidad\_adulto.csv}; no se genera ni se perturba una superficie sintética de probabilidad. La estocasticidad corresponde únicamente al muestreo de acciones durante el aprendizaje.
 \subsection{Flujo técnico}
 \begin{figure}[H]
 \centering
