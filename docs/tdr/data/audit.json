@@ -1,21 +1,18 @@
 {
-  "core_probability_data": "OBSERVED_CLIENT_INPUT",
-  "probability_file": "LOCAL_ONLY/MapProbabilidad_adulto.csv",
+  "core_probability_data": "MAP_PROBABILIDAD_ADULTO",
+  "probability_file": "MapProbabilidad_adulto.csv",
   "probability_rows_valid": 11752,
+  "probability_surface_simulated": false,
+  "probability_surface_interpolated": false,
   "ports": "DOCUMENTED_REFERENCE_COORDINATES",
-  "vessel_parameters": "DOCUMENTED_ACADEMIC_REFERENCE_NOT_CLIENT_FLEET",
-  "training_dynamic_scenarios": "SIMULATED_FROM_REAL_PROBABILITY_WITH_GAUSSIAN_PERTURBATION",
-  "simulated_probability_sigma": 0.04,
-  "external_official_sernanp": {
-    "attempted": false,
-    "used": false,
-    "error": null,
-    "layers": []
-  },
-  "route_grid": "REAL_LAT_LON_FROM_CLIENT_GRID",
+  "vessel_parameters": "ACADEMIC_REFERENCE_NOT_CLIENT_TELEMETRY",
+  "marl_training": "STATIC_ON_MAP_PROBABILIDAD_ADULTO",
+  "marl_probability_perturbation": false,
+  "route_grid": "VALID_CELLS_FROM_MAP_PROBABILIDAD_ADULTO",
   "estimated_fuel": "REFERENCE_ESTIMATE_NOT_OBSERVED_FUEL",
   "n_agents": 15,
-  "n_zones": 15,
-  "excluded_grid_cells_by_sernanp": 0,
-  "note": "El archivo bruto del cliente no se publica en este repositorio. Los resultados derivados se incluyen para documentar el informe."
+  "external_official_sernanp": {
+    "used_in_reported_run": false
+  },
+  "note": "La superficie de probabilidad del proyecto se utiliza directamente. Las rutas y movimientos de barcos son salidas simuladas del modelo."
 }
