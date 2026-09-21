@@ -1,0 +1,46 @@
+name: materializar-dataset
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'data/raw/MapProbabilidad_adulto.csv.xz.b64'
+      - 'scripts/materializar_datos.py'
+      - '.github/workflows/materializar-dataset.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materializar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Materializar CSV exacto
+        run: python scripts/materializar_datos.py
+
+      - name: Verificar integridad
+        run: |
+          echo "3eb0abd9308a2bda62285eb9718485c612e137be13fc51c33bcdfbe2fed3704f  data/raw/MapProbabilidad_adulto.csv" | sha256sum -c -
+          test "$(wc -l < data/raw/MapProbabilidad_adulto.csv)" -eq 25601
+
+      - name: Publicar CSV materializado en el repositorio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f data/raw/MapProbabilidad_adulto.csv
+          if git diff --cached --quiet; then
+            echo "El CSV ya estaba actualizado."
+          else
+            git commit -m "Materializar MapProbabilidad_adulto.csv"
+            git push
+          fi
