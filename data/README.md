@@ -1,46 +1,41 @@
 # Política de datos
 
-Este repositorio no contiene `MapProbabilidad_adulto.csv`.
-
-El repositorio es público. Si usas el archivo real del proyecto, colócalo únicamente en tu copia local:
+La fuente espacial principal del proyecto está versionada en:
 
 ```text
 data/raw/MapProbabilidad_adulto.csv
 ```
 
-La carpeta está excluida mediante `.gitignore`.
+El archivo es la base común para:
 
-## Etiquetas de procedencia
+- selección de zonas;
+- ruteo sobre la grilla;
+- Greedy;
+- MILP;
+- entrenamiento MARL;
+- mapas y figuras del TDR.
 
-El pipeline genera `outputs/auditoria.json`.
+## Integridad
 
-### CLIENT_INPUT
+SHA256 esperado:
 
-El mapa de probabilidad proviene del archivo suministrado por el proyecto.
+```text
+3eb0abd9308a2bda62285eb9718485c612e137be13fc51c33bcdfbe2fed3704f
+```
 
-### SIMULATED_DEMO
+El script `scripts/materializar_datos.py` verifica ese hash cuando encuentra el archivo.
 
-La superficie de probabilidad fue generada artificialmente por el propio código para:
+## Simulación
 
-- pruebas;
-- CI;
-- demostraciones;
-- reproducibilidad pública.
+La superficie `Prob` no se simula. Lo que sí es simulado/modelado:
 
-## Trayectorias
+- decisiones de asignación;
+- rutas planeadas;
+- movimiento de los agentes;
+- entrenamiento estocástico de la política MARL.
 
-Las rutas y movimientos de embarcaciones generados por el optimizador son simulaciones.
-
-No son trayectorias históricas AIS o SISESAT.
+Esas trayectorias no son tracks AIS o SISESAT.
 
 ## SERNANP
 
-Cuando el modo SERNANP funciona, los GeoJSON descargados se guardan en:
-
-```text
-data/cache/
-```
-
-y también están ignorados por Git.
-
-La auditoría indica si la máscara oficial fue aplicada o no.
+Las geometrías descargadas por el módulo opcional de SERNANP se guardan en `data/cache/`. La auditoría indica si la máscara legal fue aplicada.
