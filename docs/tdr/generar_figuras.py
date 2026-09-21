@@ -17,7 +17,7 @@ PORTS = {
     "Callao": (-77.14027777777778, -12.045),
 }
 
-GRID = pd.read_csv(REPO / "MapProbabilidad_adulto.csv").dropna(subset=["Lon", "Lat", "Prob"])
+GRID = pd.read_csv(REPO / "data" / "raw" / "MapProbabilidad_adulto.csv").dropna(subset=["Lon", "Lat", "Prob"])
 ZONES = pd.read_csv(OUTPUTS / "zonas_candidatas.csv")
 RESUMEN = pd.read_csv(OUTPUTS / "resumen_metodos.csv")
 GREEDY = pd.read_csv(OUTPUTS / "asignacion_greedy.csv")
