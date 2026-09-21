@@ -42,49 +42,28 @@ def save(fig, name):
 
 
 def background_probability(ax):
-    """
-    Si el archivo real está disponible localmente, usa la grilla real.
-    En GitHub público no se publica el archivo cliente; entonces se muestra
-    una superficie visual interpolada desde las zonas candidatas y se etiqueta
-    explícitamente como aproximación gráfica.
-    """
-    raw_candidates = [
-        ROOT.parent.parent / "data" / "raw" / "MapProbabilidad_adulto.csv",
-        ROOT.parent.parent / "data" / "MapProbabilidad_adulto.csv",
-    ]
-    raw = next((p for p in raw_candidates if p.exists()), None)
+    """Usa exclusivamente MapProbabilidad_adulto.csv como fondo espacial."""
+    raw = ROOT.parent.parent / "data" / "raw" / "MapProbabilidad_adulto.csv"
 
-    if raw is not None:
-        grid = pd.read_csv(raw).dropna(subset=["Lon", "Lat", "Prob"])
-        sc = ax.scatter(
-            grid["Lon"], grid["Lat"], c=grid["Prob"],
-            s=7, alpha=.80
+    if not raw.exists():
+        raise FileNotFoundError(
+            f"No existe {raw}. Ejecuta primero: python scripts/materializar_datos.py"
         )
-        return sc, "Grilla real del proyecto"
 
-    # Interpolación visual reproducible desde las 15 zonas candidatas.
-    # Se usa SOLO como fondo explicativo del informe público.
-    west, east = -82.0, -76.25
-    south, north = -14.1, -5.9
-    gx = np.linspace(west, east, 155)
-    gy = np.linspace(south, north, 220)
-    xx, yy = np.meshgrid(gx, gy)
-    field = np.zeros_like(xx, dtype=float)
-    weight = np.zeros_like(xx, dtype=float)
+    grid = pd.read_csv(raw).dropna(subset=["Lon", "Lat", "Prob"])
+    if grid.empty:
+        raise RuntimeError("MapProbabilidad_adulto.csv no contiene celdas válidas.")
 
-    for z in zones.itertuples(index=False):
-        d2 = ((xx-z.Lon)/0.55)**2 + ((yy-z.Lat)/0.65)**2
-        w = np.exp(-0.5*d2)
-        field += w * float(z.Prob)
-        weight += w
-
-    field = np.divide(field, np.maximum(weight, 1e-9))
-    field = np.clip(field, 0, 1)
-    cs = ax.scatter(
-        xx.ravel(), yy.ravel(), c=field.ravel(),
-        s=7, alpha=.72
+    sc = ax.scatter(
+        grid["Lon"],
+        grid["Lat"],
+        c=grid["Prob"],
+        s=7,
+        alpha=.82,
+        vmin=0,
+        vmax=1,
     )
-    return cs, "Interpolación visual desde zonas candidatas (no grilla cliente completa)"
+    return sc, "MapProbabilidad_adulto.csv — grilla completa del proyecto"
 
 
 def draw_reference_exclusions(ax):
@@ -109,7 +88,7 @@ def draw_reference_exclusions(ax):
 def detailed_map(assignments, title, filename, show_agent_ids=True):
     fig, ax = plt.subplots(figsize=(8.8, 10))
     sc, background_label = background_probability(ax)
-    plt.colorbar(sc, ax=ax, label="Probabilidad / superficie visual")
+    plt.colorbar(sc, ax=ax, label="Probabilidad de presencia de anchoveta")
 
     for pname, (lon, lat) in PORTS.items():
         ax.scatter(lon, lat, marker="^", s=135)
