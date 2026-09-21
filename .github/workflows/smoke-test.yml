@@ -1,4 +1,4 @@
-name: validacion-y-demo
+name: validacion-dataset-real
 
 on:
   push:
@@ -21,12 +21,15 @@ jobs:
       - name: Instalar dependencias
         run: pip install -r requirements.txt
 
-      - name: Ejecutar tests
+      - name: Materializar MapProbabilidad_adulto.csv
+        run: python scripts/materializar_datos.py
+
+      - name: Ejecutar tests sobre la grilla real
         run: pytest -q
 
-      - name: Ejecutar pipeline demo completo
+      - name: Ejecutar pipeline completo con MapProbabilidad_adulto.csv
         run: |
-          python scripts/run_pipeline.py             --demo             --sernanp no             --precio-combustible 5.0             --costo-operativo-hora 0.0
+          python scripts/run_pipeline.py             --sernanp no             --precio-combustible 5.0             --costo-operativo-hora 0.0
 
       - name: Validar auditoría
         run: |
@@ -37,8 +40,8 @@ jobs:
           p = Path("outputs/auditoria.json")
           x = json.loads(p.read_text(encoding="utf-8"))
 
-          assert x["procedencia_probabilidad"] == "SIMULATED_DEMO"
-          assert x["probabilidad_simulada"] is True
+          assert x["procedencia_probabilidad"] == "MAP_PROBABILIDAD_ADULTO"
+          assert x["probabilidad_simulada"] is False
           assert x["rutas_y_movimiento_simulados"] is True
           assert x["n_agentes"] == 15
 
@@ -56,9 +59,9 @@ jobs:
           test -f outputs/costos_por_puerto.csv
           test -f outputs/reporte_resultados.html
 
-      - name: Publicar resultados demo como artifact
+      - name: Publicar resultados de la grilla real como artifact
         uses: actions/upload-artifact@v4
         with:
-          name: resultados-demo-anchoveta
+          name: resultados-map-probabilidad-adulto
           path: outputs/
-          retention-days: 14
+          retention-days: 30
