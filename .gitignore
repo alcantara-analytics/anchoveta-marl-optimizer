@@ -6,10 +6,6 @@ venv/
 .env
 .DS_Store
 
-data/raw/*
-!data/raw/.gitkeep
-!data/raw/MapProbabilidad_adulto.csv.xz.b64
-!data/raw/MapProbabilidad_adulto.csv
 data/cache/*
 !data/cache/.gitkeep
 outputs/*
