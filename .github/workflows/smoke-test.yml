@@ -1,4 +1,4 @@
-name: validacion-dataset-real
+name: validacion-dataset-base
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
 jobs:
   validar:
     runs-on: ubuntu-latest
-
     steps:
       - name: Descargar repositorio
         uses: actions/checkout@v4
@@ -18,16 +17,18 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Verificar MapProbabilidad_adulto.csv
+        run: |
+          test -f MapProbabilidad_adulto.csv
+          head -n 2 MapProbabilidad_adulto.csv
+
       - name: Instalar dependencias
         run: pip install -r requirements.txt
 
-      - name: Materializar MapProbabilidad_adulto.csv
-        run: python scripts/materializar_datos.py
-
-      - name: Ejecutar tests sobre la grilla real
+      - name: Ejecutar tests
         run: pytest -q
 
-      - name: Ejecutar pipeline completo con MapProbabilidad_adulto.csv
+      - name: Ejecutar pipeline completo
         run: |
           python scripts/run_pipeline.py             --sernanp no             --precio-combustible 5.0             --costo-operativo-hora 0.0
 
@@ -36,35 +37,35 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-
-          p = Path("outputs/auditoria.json")
-          x = json.loads(p.read_text(encoding="utf-8"))
-
+          x = json.loads(Path("outputs/auditoria.json").read_text(encoding="utf-8"))
           assert x["procedencia_probabilidad"] == "MAP_PROBABILIDAD_ADULTO"
-          assert x["probabilidad_simulada"] is False
-          assert x["rutas_y_movimiento_simulados"] is True
+          assert x["grilla_probabilidad_generada_por_pipeline"] is False
+          assert x["interpolacion_probabilidad_usada"] is False
+          assert x["marl_perturbacion_probabilidad"] is False
+          assert x["n_filas_validas_probabilidad"] == 11752
           assert x["n_agentes"] == 15
-
           print(json.dumps(x, indent=2, ensure_ascii=False))
           PY
 
-      - name: Verificar resultados principales
+      - name: Verificar salidas
         run: |
           test -f outputs/mapa_probabilidad_zonas.png
           test -f outputs/mapa_asignacion_greedy.png
           test -f outputs/mapa_asignacion_milp.png
           test -f outputs/mapa_asignacion_marl.png
+          test -f outputs/asignacion_greedy.csv
+          test -f outputs/asignacion_milp.csv
           test -f outputs/asignacion_marl.csv
           test -f outputs/historial_entrenamiento_marl.csv
+          test -f outputs/trayectorias_marl.csv
           test -f outputs/simulacion_flota_marl.gif
           test -f outputs/resumen_metodos.csv
-          test -f outputs/costos_por_barco.csv
-          test -f outputs/costos_por_puerto.csv
+          test -f outputs/resumen_puerto_metodo.csv
           test -f outputs/reporte_resultados.html
 
-      - name: Publicar resultados de la grilla real como artifact
+      - name: Publicar resultados
         uses: actions/upload-artifact@v4
         with:
-          name: resultados-map-probabilidad-adulto-marl
+          name: resultados-map-probabilidad-adulto
           path: outputs/
           retention-days: 30
