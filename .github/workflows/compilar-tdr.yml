@@ -3,7 +3,7 @@ name: compilar-tdr
 on:
   push:
     paths:
-      - 'MapProbabilidad_adulto.csv'
+      - 'data/raw/MapProbabilidad_adulto.csv'
       - 'src/**'
       - 'scripts/**'
       - 'docs/tdr/**'
