@@ -217,6 +217,28 @@ def main():
     greedy = anexar_metricas(greedy_base, costos)
     milp = anexar_metricas(milp_base, costos)
 
+    # MARL: entrenamiento cooperativo estático sobre la MISMA grilla real.
+    marl_cfg = MARLConfig(
+        updates=120,
+        episodes_per_update=12,
+        max_boats_per_zone=cfg.max_boats_per_zone,
+        seed=42,
+    )
+    theta_marl, historial_marl = train_marl_static(
+        agents,
+        zones,
+        costos[["port", "zone_id", "prob", "route_nm", "fuel_l"]],
+        cfg=marl_cfg,
+    )
+    marl_base = decode_policy_with_capacity(
+        agents,
+        zones,
+        costos[["port", "zone_id", "prob", "route_nm", "fuel_l"]],
+        theta_marl,
+        max_boats_per_zone=cfg.max_boats_per_zone,
+    )
+    marl = anexar_metricas(marl_base, costos)
+
     routes_greedy = {
         int(r.agent_id): path_lookup[(r.port, int(r.zone_id))]
         for r in greedy.itertuples(index=False)
@@ -225,10 +247,15 @@ def main():
         int(r.agent_id): path_lookup[(r.port, int(r.zone_id))]
         for r in milp.itertuples(index=False)
     }
+    routes_marl = {
+        int(r.agent_id): path_lookup[(r.port, int(r.zone_id))]
+        for r in marl.itertuples(index=False)
+    }
 
     resumen = pd.DataFrame([
         resumen_metodo("Greedy", greedy),
         resumen_metodo("MILP", milp),
+        resumen_metodo("MARL", marl),
     ])
 
     costos_puerto = costos_por_puerto(milp)
@@ -238,6 +265,8 @@ def main():
     costos.to_csv(outdir / "costos_rutas.csv", index=False)
     greedy.to_csv(outdir / "asignacion_greedy.csv", index=False)
     milp.to_csv(outdir / "asignacion_milp.csv", index=False)
+    marl.to_csv(outdir / "asignacion_marl.csv", index=False)
+    historial_marl.to_csv(outdir / "historial_entrenamiento_marl.csv", index=False)
     resumen.to_csv(outdir / "resumen_metodos.csv", index=False)
     milp.to_csv(outdir / "costos_por_barco.csv", index=False)
     costos_puerto.to_csv(outdir / "costos_por_puerto.csv", index=False)
@@ -256,20 +285,25 @@ def main():
         outdir / "mapa_asignacion_milp.png",
         "Asignación MILP de la flota"
     )
+    save_map(
+        prob, PORTS, zones, routes_marl,
+        outdir / "mapa_asignacion_marl.png",
+        "Asignación MARL de la flota — entrenamiento sobre MapProbabilidad_adulto.csv"
+    )
     guardar_graficos(greedy, milp, resumen, outdir)
 
-    # Simulación
+    # Simulación de la política MARL final.
     if not args.no_gif:
         save_animation(
-            prob, PORTS, zones, routes_milp,
-            outdir / "simulacion_flota.gif",
+            prob, PORTS, zones, routes_marl,
+            outdir / "simulacion_flota_marl.gif",
         )
 
     auditoria = {
         "procedencia_probabilidad": procedencia,
         "probabilidad_simulada": False,
         "rutas_y_movimiento_simulados": True,
-        "metodo_visualizacion_principal": "MILP",
+        "metodo_visualizacion_principal": "MARL",
         "n_agentes": int(len(agents)),
         "n_zonas": int(len(zones)),
         "flota_homogenea": True,
