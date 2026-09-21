@@ -1,5 +1,7 @@
 \section{Resultados del prototipo}
+
 \subsection{Comparación de métodos}
+
 \begin{table}[H]
 \centering
 \caption{Resultados derivados de la corrida del proyecto.}
@@ -13,37 +15,167 @@ MARL   & 0.9265 & 2,022.92 & 33,904.11 &  5 & 169,521 \\
 \bottomrule
 \end{tabular}}
 \end{table}
-El costo referencial utiliza S/ 5.00 por litro únicamente como escenario ilustrativo.
-\begin{figure}[H]\centering
-\begin{subfigure}{0.49\textwidth}\includegraphics[width=\linewidth]{figures/probabilidad_metodos.jpg}\caption{Probabilidad media.}\end{subfigure}\hfill
-\begin{subfigure}{0.49\textwidth}\includegraphics[width=\linewidth]{figures/distancia_metodos.jpg}\caption{Distancia total.}\end{subfigure}
+
+El costo referencial utiliza S/ 5.00 por litro únicamente como escenario ilustrativo. No debe interpretarse como un precio oficial ni como un costo observado de la empresa.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\linewidth]{figures/probabilidad_metodos.jpg}
+\caption{Probabilidad media.}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\linewidth]{figures/distancia_metodos.jpg}
+\caption{Distancia total.}
+\end{subfigure}
 \vspace{0.3cm}
-\begin{subfigure}{0.49\textwidth}\includegraphics[width=\linewidth]{figures/combustible_metodos.jpg}\caption{Combustible de referencia.}\end{subfigure}\hfill
-\begin{subfigure}{0.49\textwidth}\includegraphics[width=\linewidth]{figures/costo_combustible_escenario.jpg}\caption{Costo ilustrativo.}\end{subfigure}
+
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\linewidth]{figures/combustible_metodos.jpg}
+\caption{Combustible de referencia.}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\linewidth]{figures/costo_combustible_escenario.jpg}
+\caption{Costo ilustrativo.}
+\end{subfigure}
 \caption{Comparación cuantitativa de Greedy, MILP y MARL.}
 \end{figure}
-MILP alcanza la mayor probabilidad media y, al mismo tiempo, la menor distancia y combustible de referencia. En un escenario estático, esta ventaja es consistente con el carácter centralizado del optimizador. MARL mantiene una probabilidad alta, pero presenta recorridos mayores; su valor esperado se encuentra en escenarios dinámicos con actualizaciones, cierres o reasignaciones.
-\subsection{Asignación espacial MARL}
-\begin{figure}[H]\centering
-\includegraphics[width=0.86\textwidth]{figures/mapa_final_modelo.jpg}
-\caption{Visualización reproducible de la asignación MARL. Las líneas conectan cada puerto con la zona asignada para interpretar la decisión; las rutas operativas deben calcularse con A* y la máscara legal activa.}
+
+MILP alcanza la mayor probabilidad media y, al mismo tiempo, la menor distancia y combustible de referencia. En un escenario estático esta ventaja es consistente con el carácter centralizado del optimizador. MARL mantiene una probabilidad alta, pero presenta recorridos mayores; su principal valor está en escenarios dinámicos con actualizaciones, cierres, cambios ambientales o reasignaciones.
+
+\subsection{Mapa detallado de probabilidad, puertos y zonas candidatas}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{figures/mapa_detallado_probabilidad_puertos_zonas.jpg}
+\caption{Mapa detallado del dominio espacial, puertos y zonas candidatas. Cuando el archivo real del cliente está disponible localmente, el fondo corresponde a la grilla real. En la compilación pública de GitHub, el fondo es una interpolación visual reproducible desde las zonas candidatas y queda rotulado como tal. Los círculos de exclusión son únicamente referencias ilustrativas y no geometrías oficiales SERNANP.}
 \end{figure}
-\subsection{Diagnóstico por puerto}
-\begin{table}[H]\centering\caption{Resumen MARL por puerto.}
-\begin{tabular}{lrrr}\toprule Puerto & Prob. media & Distancia total (NM) & Combustible ref. (L) \\ \midrule
+
+Este gráfico cumple una función diagnóstica central: permite verificar la relación entre la estructura espacial del mapa, la posición de los puertos y la ubicación de las zonas candidatas antes de interpretar la asignación de los agentes.
+
+\subsection{Comparación espacial de Greedy, MILP y MARL}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\linewidth]{figures/mapa_detallado_greedy.jpg}
+\caption{Greedy.}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\linewidth]{figures/mapa_detallado_milp.jpg}
+\caption{MILP.}
+\end{subfigure}
+\vspace{0.3cm}
+
+\begin{subfigure}{0.58\textwidth}
+\includegraphics[width=\linewidth]{figures/mapa_detallado_marl.jpg}
+\caption{MARL.}
+\end{subfigure}
+\caption{Mapas detallados de asignación por método. Las líneas identifican la conexión entre puerto de origen y zona asignada, y las etiquetas A0--A14 permiten seguir cada agente.}
+\end{figure}
+
+La comparación visual permite observar que MILP concentra la flota en un conjunto menor de zonas y reduce el esfuerzo total de navegación, mientras que Greedy distribuye más la flota y MARL presenta una concentración intermedia pero con trayectos más extensos en algunos agentes.
+
+\subsection{Ranking de zonas candidatas}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{figures/top10_zonas_probabilidad.jpg}
+\caption{Diez zonas candidatas con mayor probabilidad.}
+\end{figure}
+
+El ranking permite separar dos decisiones que no deben confundirse: una zona puede tener una probabilidad alta, pero no necesariamente ser la mejor asignación para toda la flota si se encuentra muy lejos del puerto de origen o si ya concentra demasiados agentes.
+
+\subsection{Ocupación de zonas por método}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/ocupacion_zonas_por_metodo.jpg}
+\caption{Número de barcos asignados a cada zona bajo Greedy, MILP y MARL.}
+\end{figure}
+
+La ocupación permite estudiar la coordinación y la concentración espacial. El máximo de barcos por zona utilizado en el experimento es una restricción de modelamiento y no una norma pesquera oficial.
+
+\subsection{Diagnóstico MARL por puerto}
+
+\begin{table}[H]
+\centering
+\caption{Resumen MARL por puerto.}
+\begin{tabular}{lrrr}
+\toprule
+Puerto & Prob. media & Distancia total (NM) & Combustible ref. (L) \\
+\midrule
 Malabrigo & 0.9145 & 507.98 & 8,513.68 \\
 Chimbote & 0.9135 & 477.74 & 8,006.93 \\
 Callao & 0.9515 & 1,037.20 & 17,383.50 \\
-\bottomrule\end{tabular}\end{table}
-\begin{figure}[H]\centering
-\begin{subfigure}{0.49\textwidth}\includegraphics[width=\linewidth]{figures/combustible_puerto_marl.jpg}\caption{Combustible por puerto.}\end{subfigure}\hfill
-\begin{subfigure}{0.49\textwidth}\includegraphics[width=\linewidth]{figures/ocupacion_marl.jpg}\caption{Ocupación por zona.}\end{subfigure}
-\vspace{0.3cm}
-\begin{subfigure}{0.62\textwidth}\includegraphics[width=\linewidth]{figures/tradeoff_marl.jpg}\caption{Distancia vs probabilidad.}\end{subfigure}
-\caption{Diagnósticos de la política multiagente.}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\linewidth]{figures/combustible_puerto_marl.jpg}
+\caption{Combustible por puerto.}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\linewidth]{figures/distancia_puerto_marl.jpg}
+\caption{Distancia por puerto.}
+\end{subfigure}
+\caption{Esfuerzo operativo agregado por puerto para la política MARL.}
 \end{figure}
-\subsection{Entrenamiento}
-\begin{figure}[H]\centering\includegraphics[width=0.80\textwidth]{figures/entrenamiento_marl.jpg}\caption{Historial de recompensa del entrenamiento MARL sobre escenarios simulados a partir del mapa real.}\end{figure}
-La recompensa se mantiene estable y alcanza rápidamente una meseta. Esto sugiere que el siguiente ciclo de mejora debe revisar la función de recompensa, en particular la penalización por distancia.
+
+Callao presenta el mayor esfuerzo acumulado en la solución MARL. Este resultado no implica un problema por sí mismo, pero sí evidencia que la función de recompensa debe controlar con mayor fuerza los desplazamientos largos cuando la mejora marginal en probabilidad es reducida.
+
+\subsection{Diagnóstico MARL por embarcación}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\linewidth]{figures/combustible_barco_marl.jpg}
+\caption{Combustible estimado por agente.}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\linewidth]{figures/policy_reward_barco_marl.jpg}
+\caption{Recompensa por agente.}
+\end{subfigure}
+\vspace{0.3cm}
+
+\begin{subfigure}{0.47\textwidth}
+\includegraphics[width=\linewidth]{figures/ocupacion_marl.jpg}
+\caption{Ocupación de zonas.}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.47\textwidth}
+\includegraphics[width=\linewidth]{figures/tradeoff_marl.jpg}
+\caption{Distancia versus probabilidad.}
+\end{subfigure}
+\caption{Diagnósticos detallados de la solución multiagente.}
+\end{figure}
+
+El gráfico de trade-off permite identificar agentes para los cuales la distancia recorrida aumenta de forma sustancial sin una mejora equivalente en probabilidad. Estos casos son candidatos naturales para ajustar la penalización de combustible/distancia en la recompensa.
+
+\subsection{Entrenamiento MARL}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/entrenamiento_marl_detallado.jpg}
+\caption{Historial de entrenamiento MARL y media móvil de 10 actualizaciones.}
+\end{figure}
+
+La recompensa se mantiene relativamente estable y alcanza rápidamente una meseta. En lugar de interpretar esta estabilidad como evidencia suficiente de optimalidad, se utiliza como señal para revisar la función de recompensa, ampliar la variabilidad de escenarios y probar configuraciones dinámicas más exigentes.
+
 \subsection{Simulación}
-\begin{figure}[H]\centering\includegraphics[width=0.90\textwidth]{figures/simulacion_montaje.jpg}\caption{Cuatro momentos de una simulación visual del desplazamiento planeado de los 15 agentes. No representa tracking histórico.}\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.90\textwidth]{figures/simulacion_montaje.jpg}
+\caption{Cuatro momentos de una simulación visual del desplazamiento planeado de los 15 agentes. No representa tracking histórico.}
+\end{figure}
+
+La simulación permite presentar el resultado de manera operacional: los agentes parten de sus respectivos puertos y avanzan hacia las zonas asignadas. Debe interpretarse como una visualización del plan generado por el modelo y no como evidencia de trayectorias reales observadas.
